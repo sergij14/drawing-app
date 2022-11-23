@@ -26,7 +26,8 @@ const stream$ = mouseDown$.pipe(
         y: e.offsetY,
       })),
       pairwise(),
-      takeUntil(mouseUp$)
+      takeUntil(mouseUp$),
+      takeUntil(mouseOut$)
     );
   })
 );
