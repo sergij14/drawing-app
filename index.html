@@ -7,15 +7,19 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-    />
     <title>Drawing app</title>
   </head>
   <body style="padding-top: 3rem">
-    <div class="container"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <div class="container">
+      <canvas
+        style="
+          width: 100%;
+          max-width: 600px;
+          margin: 10px;
+          border: 2px #ccc solid;
+        "
+      ></canvas>
+    </div>
+    <script type="module" src="./src/index.js"></script>
   </body>
 </html>
