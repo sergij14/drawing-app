@@ -1,5 +1,5 @@
 import { fromEvent } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, pairwise, switchMap, takeUntil } from "rxjs/operators";
 
 const canvas = document.querySelector("canvas");
 const range = document.getElementById("range");
@@ -18,14 +18,24 @@ const mouseDown$ = fromEvent(canvas, "mousedown");
 const mouseUp$ = fromEvent(canvas, "mouseup");
 const mouseOut$ = fromEvent(canvas, "mouseout");
 
-mouseMove$
-  .pipe(
-    map((e) => ({
-      x: e.offsetX,
-      y: e.offsetY,
-    }))
-  )
-  .subscribe((pos) => {
-    console.log(pos);
-    ctx.fillRect(pos.x, pos.y, 2, 2);
-  });
+const stream$ = mouseDown$.pipe(
+  switchMap(() => {
+    return mouseMove$.pipe(
+      map((e) => ({
+        x: e.offsetX,
+        y: e.offsetY,
+      })),
+      pairwise(),
+      takeUntil(mouseUp$)
+    );
+  })
+);
+
+stream$.subscribe(([from, to]) => {
+  console.log(from, to);
+
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.stroke();
+});
