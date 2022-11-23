@@ -7,6 +7,7 @@ import {
   withLatestFrom,
   startWith,
 } from "rxjs/operators";
+import { createInputStream } from "./utils/createInputStream";
 
 const canvas = document.querySelector("canvas");
 const range = document.getElementById("range");
@@ -25,15 +26,10 @@ const mouseDown$ = fromEvent(canvas, "mousedown");
 const mouseUp$ = fromEvent(canvas, "mouseup");
 const mouseOut$ = fromEvent(canvas, "mouseout");
 
-const lineWidth$ = fromEvent(range, "input").pipe(
-  map((e) => e.target.value),
-  startWith(range.value)
-);
+///////////////////////////////////////////
 
-const strokeStyle$ = fromEvent(color, "input").pipe(
-  map((e) => e.target.value),
-  startWith(color.value)
-);
+const lineWidth$ = createInputStream(range);
+const strokeStyle$ = createInputStream(color);
 
 const stream$ = mouseDown$.pipe(
   withLatestFrom(lineWidth$, strokeStyle$, (_, lineWidth, strokeStyle) => {
@@ -57,8 +53,6 @@ const stream$ = mouseDown$.pipe(
 );
 
 stream$.subscribe(([from, to]) => {
-  console.log(from, to);
-
   const { lineWidth, strokeStyle } = from.options;
 
   ctx.lineWidth = lineWidth;
