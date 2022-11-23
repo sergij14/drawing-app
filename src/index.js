@@ -1,5 +1,12 @@
 import { fromEvent } from "rxjs";
-import { map, pairwise, switchMap, takeUntil } from "rxjs/operators";
+import {
+  map,
+  pairwise,
+  switchMap,
+  takeUntil,
+  withLatestFrom,
+  startWith,
+} from "rxjs/operators";
 
 const canvas = document.querySelector("canvas");
 const range = document.getElementById("range");
@@ -18,14 +25,23 @@ const mouseDown$ = fromEvent(canvas, "mousedown");
 const mouseUp$ = fromEvent(canvas, "mouseup");
 const mouseOut$ = fromEvent(canvas, "mouseout");
 
-const lineWidth$ = fromEvent(range, "input").pipe(map((e) => e.target.value));
+const lineWidth$ = fromEvent(range, "input").pipe(
+  map((e) => e.target.value),
+  startWith(range.value)
+);
 
 const stream$ = mouseDown$.pipe(
-  switchMap(() => {
+  withLatestFrom(lineWidth$, (_, lineWidth) => {
+    return {
+      lineWidth,
+    };
+  }),
+  switchMap((options) => {
     return mouseMove$.pipe(
       map((e) => ({
         x: e.offsetX,
         y: e.offsetY,
+        options,
       })),
       pairwise(),
       takeUntil(mouseUp$),
@@ -37,6 +53,9 @@ const stream$ = mouseDown$.pipe(
 stream$.subscribe(([from, to]) => {
   console.log(from, to);
 
+  const { lineWidth } = from.options;
+
+  ctx.lineWidth = lineWidth;
   ctx.beginPath();
   ctx.moveTo(from.x, from.y);
   ctx.lineTo(to.x, to.y);
