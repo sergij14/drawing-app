@@ -1,3 +1,3 @@
-# Select plugin
+# Drawing App
 
-A custom select plugin built with vanilla TypeScript.
+A simple drawing application created with RxJS
