@@ -18,6 +18,8 @@ const mouseDown$ = fromEvent(canvas, "mousedown");
 const mouseUp$ = fromEvent(canvas, "mouseup");
 const mouseOut$ = fromEvent(canvas, "mouseout");
 
+const lineWidth$ = fromEvent(range, "input").pipe(map((e) => e.target.value));
+
 const stream$ = mouseDown$.pipe(
   switchMap(() => {
     return mouseMove$.pipe(
